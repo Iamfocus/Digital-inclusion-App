@@ -12,6 +12,7 @@ const DownloadPdf = ({
   const [captchaToken, setCaptchaToken] = useState(null);
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
   const onChangeDownloadEmail = (e) => {
     setDownloaded(false);
@@ -27,7 +28,7 @@ const DownloadPdf = ({
       return;
     }
 
-    if (!captchaToken) {
+    if (recaptchaSiteKey && !captchaToken) {
       alert("Please verify you are not a robot.");
       setLoading(false);
       return;
@@ -100,11 +101,13 @@ const DownloadPdf = ({
         </button>
       </div>
       <div className="block">
-        <ReCAPTCHA
-          sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-          onChange={(token) => setCaptchaToken(token)}
-          theme="light"
-        />
+        {recaptchaSiteKey ? (
+          <ReCAPTCHA
+            sitekey={recaptchaSiteKey}
+            onChange={(token) => setCaptchaToken(token)}
+            theme="light"
+          />
+        ) : null}
       </div>
     </form>
   );

@@ -7,6 +7,7 @@ import Input from "./Input";
 
 const ContactModal = ({ isOpen, onClose }) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -49,7 +50,7 @@ const ContactModal = ({ isOpen, onClose }) => {
 
     if (!emailRegex.test(emailAddress)) return;
 
-    if (!captchaToken) {
+    if (recaptchaSiteKey && !captchaToken) {
       alert("Please verify that you are not a robot.");
       return;
     }
@@ -198,11 +199,13 @@ const ContactModal = ({ isOpen, onClose }) => {
           </div>
 
           {/* CAPTCHA */}
-          <ReCAPTCHA
-            sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}
-            onChange={(token) => setCaptchaToken(token)}
-            onExpired={() => setCaptchaToken(null)}
-          />
+          {recaptchaSiteKey ? (
+            <ReCAPTCHA
+              sitekey={recaptchaSiteKey}
+              onChange={(token) => setCaptchaToken(token)}
+              onExpired={() => setCaptchaToken(null)}
+            />
+          ) : null}
 
           {/* Submit */}
           <button
